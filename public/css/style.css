@@ -235,3 +235,6 @@ option:checked {
  font-weight: inherit;
 }
 
+.pagination {    
+    margin: 0; 
+}

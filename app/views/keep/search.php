@@ -70,6 +70,10 @@
         <?php endforeach; ?>
       </tbody>
     </table>
+      
+    <span id="paginacao"><?= $paginacao; ?></span>
+    
+    <!--
     <nav>
       <ul class="pagination">
         <li>
@@ -88,8 +92,10 @@
           </a>
         </li>
       </ul>
-    </nav>
+    </nav>-->
+      
   </div>
+  
 <?php endif; ?>
 
 <script>
@@ -98,5 +104,5 @@
     $("#search").addClass('active');
   });
 </script>
-
+<br><br><br><br><br><br><br><br>
 <?php include_once ('../_layouts/footer.php'); ?>

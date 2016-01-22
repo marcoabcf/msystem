@@ -1,12 +1,6 @@
 // Executado quando aberto a página
 $(document).ready(function() {
 
-// Limpando Campos de Pesquisa
-  function CleanInputSearch() {
-    $('input[name=descricao], input[name=email], input[name=sigla]').val('');
-    $('input[name=descricao]').focus();
-  }
-
 // Pesquisando sistema
   $('#research, #clean_search').on('click', function() {
 
@@ -36,7 +30,6 @@ $(document).ready(function() {
        type: "POST",
        dataType: "json",
        data: dados,
-
        success: function (result) {
           var tbody = $('tbody');
 
@@ -128,7 +121,6 @@ $(document).ready(function() {
       var dados = $('#alteration').serialize() + "&q=" + q;
 
       $.ajax({
-
          url: "../../actions/alter.php",
          type: "POST",
          dataType: "html",
@@ -153,3 +145,63 @@ $(document).ready(function() {
   }
 
 });
+
+
+//busca com paginacao
+function pesquisaComPaginacao(apartir, pagina_atual)
+{
+    var dados = $('#searching').serialize();
+    dados += "&apartir="+apartir+"&pagina_atual="+pagina_atual;
+    $.ajax({
+       url: "../../actions/search.php",
+       type: "POST",
+       dataType: "json",
+       data: dados,
+       success: retornoPesquisarPaginacao,
+       error: function(result) {
+          $('#alert').addClass('alert alert-danger').html().show('100');
+       }
+    });
+}
+
+// retorno do callback da funcao pesquisaComPaginacao
+function retornoPesquisarPaginacao(result)
+{
+    var tbody = $('tbody');
+    var search = '';
+    
+    $('#paginacao').html('');
+    tbody.html(search);
+
+    if(result.tabela.length != 0) {
+        tbody.html('');
+
+        $.each(result.tabela, function(k, value) {
+            search += "<tr>";
+            search += "<td>" + value.description + "</td>";
+            search += "<td>" + value.initial + "</td>";
+            search += "<td>" + value.email + "</td>";
+            search += "<td>" + value.url + "</td>";
+            search += "<td id='table_status' class='text-center'>" + value.status + "</td>";
+            search += "<td class='text-center'>";
+            search += "<button class='btn btn-red-dark' onclick='location=\"alter?q=" + value.id + "\"'><span class='glyphicon glyphicon-edit' aria-hidden='true'></span></button>";
+            search += "</td>";
+            search += "</tr>";
+        });
+
+    } else {
+     $('#alert').addClass('alert alert-danger').html('Nenhum Sistema foi encontrado. Favor revisar os critérios da sua pesquisa!').delay(4000).fadeOut(0);
+    }
+
+    tbody.append(search);
+    
+    $('#paginacao').html(result.paginacao);
+    console.log(result);
+}
+
+// Limpando Campos de Pesquisa
+function CleanInputSearch() {
+    $('input[name=descricao], input[name=email], input[name=sigla]').val('');
+    $('input[name=descricao]').focus();
+}
+

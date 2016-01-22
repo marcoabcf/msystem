@@ -10,6 +10,11 @@ class System extends Model {
     protected $initial;
     protected $url;
     protected $status;
+    
+    //paginacao
+    protected $apartir = 0;
+    protected $pagina_atual = 0;
+    protected $limite = 2;
 
     public function __construct()
     {
@@ -76,7 +81,14 @@ class System extends Model {
     public function toList()
     {
 
-        $sql = 'SELECT id, description, email, initial, url, IF(status = 1, "ATIVO", "CANCELADO") "status" FROM keepsystem ORDER BY status ASC';
+        $sql = 'SELECT  id, 
+                        description, 
+                        email, 
+                        initial, 
+                        url, 
+                        IF(status = 1, "ATIVO", "CANCELADO") "status" 
+                FROM keepsystem 
+                LIMIT '.$this->limite.' OFFSET '.$this->apartir;
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
@@ -86,15 +98,69 @@ class System extends Model {
 
     public function search()
     {
+        try {
+            $sql = "SELECT id, 
+                            description, 
+                            email, 
+                            initial, 
+                            url, 
+                            IF(status = 1, 'ATIVO', 'CANCELADO') 'status' 
+                    FROM keepsystem 
+                    WHERE (description LIKE '%".$this->description."%') OR (email LIKE '%".$this->email."%') OR (initial LIKE '%".$this->initial."%')
+                    LIMIT ".$this->limite." OFFSET ".$this->apartir;
 
-        $sql = 'SELECT id, description, email, initial, url, IF(status = 1, "ATIVO", "CANCELADO") "status" FROM keepsystem WHERE description LIKE :description AND email LIKE :email AND initial LIKE :initial';
+            $stmt = $this->conn->prepare($sql);
+
+            $stmt->execute();
+
+
+            return $stmt->fetchAll();
+        } catch(PDOException $e) {
+                throw new Exception('Erro: '. $e->getMessage());
+        }
+    }
+
+    private function countSystem()
+    {
+
+        $sql = 'SELECT count(*) cont FROM keepsystem';
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':description', $this->description, PDO::PARAM_STR);
-        $stmt->bindParam(':email', $this->email, PDO::PARAM_STR);
-        $stmt->bindParam(':initial', $this->initial, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt->fetchAll();
-    }
+        return $stmt->fetch();
+    }    
+    
+    public function pagination() {
+        $paginacao = "";
+        $total = $this->countSystem();
+        $num_paginas = floor($total->cont/$this->limite);
+        
+        //monta a paginação
+        if($num_paginas > 1) {
+            $paginacao .= '<nav><ul class="pagination"> <li><a href="javascript:pesquisaComPaginacao(0, 1);">Inicio</a></li>';
+                $ultima_pagina = 0;
+            
+                for ($i = 1 ; $i <= $num_paginas ; $i++) { 	
+                    
+                    $ultima_pagina = $i*$this->limite;
+                    
+                    if($i == $this->pagina_atual) {
+                        $paginacao .="<li class='active' ><a href='javascript:;' >".$i."</a></li>";
+                    } else {
+                        $paginacao .="<li ><a href='javascript:pesquisaComPaginacao(".$i * $this->limite.",".$i.");'>".$i."</a></li>";
+                    }
+                }
+            
+            if($num_paginas <= 3) {
+                $paginacao .='</lu></nav>';
+            } else {
+                $paginacao .= '<li><a href="javascript:pesquisaComPaginacao('.$ultima_pagina.', '.$num_paginas.');">Última</a> </li></lu></nav';
+            }
+        }
+        
+        return $paginacao;
+
+    }    
+    
 }
