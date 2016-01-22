@@ -4,4 +4,4 @@
   $system = new SystemController;
 
   $list = $system->toList();
-  $paginacao = $system->pagination();    
+  $paginacao = $system->pagination();

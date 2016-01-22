@@ -48,7 +48,7 @@ class SystemController extends Controller {
         }
     }
 
-    public function getData($id) 
+    public function getData($id)
     {
 
         $this->system->id($id);
@@ -58,7 +58,7 @@ class SystemController extends Controller {
 
     }
 
-    public function toList() 
+    public function toList()
     {
 
         $result = $this->system->toList();
@@ -66,17 +66,16 @@ class SystemController extends Controller {
 
     }
 
-    public function search() 
+    public function search()
     {
-
-        if($this->input->get('all') == 'null') {
+        if($this->input->get('all')) {
             $result = $this->system->toList();
 
         } else {
 
-            $this->system->description($this->input->get('descricao'))
+            $this->system->description('%'. str_replace(" ", "%", $this->input->get('descricao')) .'%')
                          ->email($this->input->get('email'))
-                         ->initial($this->input->get('sigla'))
+                         ->initial('%'. $this->input->get('sigla') .'%')
                          ->apartir($this->input->get('apartir'))
                          ->pagina_atual($this->input->get('pagina_atual'));
 
@@ -86,11 +85,11 @@ class SystemController extends Controller {
 
         echo json_encode($result);
     }
-    
+
     public function pagination()
     {
        $this->system->apartir(0)->pagina_atual(1);
-        
-        return $this->system->pagination();     
+
+        return $this->system->pagination();
     }
 }

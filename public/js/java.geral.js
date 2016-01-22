@@ -14,7 +14,7 @@ $(document).ready(function() {
     var search = "";
 
     if(validate || $(this).attr('id') == 'clean_search'){
-      var dados = "all="+null;
+      var dados = "all=true";
 
       if($(this).attr('id') == 'clean_search') {
         CleanInputSearch();
@@ -32,6 +32,7 @@ $(document).ready(function() {
        data: dados,
        success: function (result) {
           var tbody = $('tbody');
+          console.log(result.tabela);
 
           if(result.length != 0) {
             tbody.html('');
@@ -151,7 +152,8 @@ $(document).ready(function() {
 function pesquisaComPaginacao(apartir, pagina_atual)
 {
     var dados = $('#searching').serialize();
-    dados += "&apartir="+apartir+"&pagina_atual="+pagina_atual;
+    dados += "&apartir=" + apartir + "&pagina_atual=" + pagina_atual;
+
     $.ajax({
        url: "../../actions/search.php",
        type: "POST",
@@ -169,7 +171,7 @@ function retornoPesquisarPaginacao(result)
 {
     var tbody = $('tbody');
     var search = '';
-    
+
     $('#paginacao').html('');
     tbody.html(search);
 
@@ -194,7 +196,7 @@ function retornoPesquisarPaginacao(result)
     }
 
     tbody.append(search);
-    
+
     $('#paginacao').html(result.paginacao);
 }
 

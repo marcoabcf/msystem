@@ -4,17 +4,18 @@ include_once('Model.php');
 
 class System extends Model {
 
+    // Atributos System
     protected $id;
     protected $description;
     protected $email;
     protected $initial;
     protected $url;
     protected $status;
-    
-    //paginacao
+
+    // Paginação
     protected $apartir = 0;
     protected $pagina_atual = 0;
-    protected $limite = 2;
+    protected $limite = 50;
 
     public function __construct()
     {
@@ -81,16 +82,18 @@ class System extends Model {
     public function toList()
     {
 
-        $sql = 'SELECT  id, 
-                        description, 
-                        email, 
-                        initial, 
-                        url, 
-                        IF(status = 1, "ATIVO", "CANCELADO") "status" 
-                FROM keepsystem 
-                LIMIT '.$this->limite.' OFFSET '.$this->apartir;
+        $sql = 'SELECT  id,
+                        description,
+                        email,
+                        initial,
+                        url,
+                        IF(status = 1, "ATIVO", "CANCELADO") "status"
+                FROM keepsystem
+                LIMIT :limts OFFSET :apartir';
 
         $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':limts', $this->limite, PDO::PARAM_INT);
+        $stmt->bindParam(':apartir', $this->apartir, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt->fetchAll();
@@ -99,22 +102,30 @@ class System extends Model {
     public function search()
     {
         try {
-            $sql = "SELECT id, 
-                            description, 
-                            email, 
-                            initial, 
-                            url, 
-                            IF(status = 1, 'ATIVO', 'CANCELADO') 'status' 
-                    FROM keepsystem 
-                    WHERE (description LIKE '%".$this->description."%') OR (email LIKE '%".$this->email."%') OR (initial LIKE '%".$this->initial."%')
-                    LIMIT ".$this->limite." OFFSET ".$this->apartir;
+
+            $sql = "SELECT id,
+                            description,
+                            email,
+                            initial,
+                            url,
+                            IF(status = 1, 'ATIVO', 'CANCELADO') 'status'
+                    FROM keepsystem
+                    WHERE (description LIKE :description)
+                    OR (email LIKE :email)
+                    OR (initial LIKE :initial)
+                    LIMIT :limts OFFSET :apartir";
 
             $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':description', $this->description, PDO::PARAM_STR);
+            $stmt->bindParam(':email', $this->email, PDO::PARAM_STR);
+            $stmt->bindParam(':initial', $this->initial, PDO::PARAM_STR);
+            $stmt->bindParam(':limts', $this->limite, PDO::PARAM_INT);
+            $stmt->bindParam(':apartir', $this->apartir, PDO::PARAM_INT);
 
             $stmt->execute();
 
-
             return $stmt->fetchAll();
+
         } catch(PDOException $e) {
                 throw new Exception('Erro: '. $e->getMessage());
         }
@@ -129,38 +140,37 @@ class System extends Model {
         $stmt->execute();
 
         return $stmt->fetch();
-    }    
-    
+    }
+
     public function pagination() {
-        $paginacao = "";
+        $pagination = "";
         $total = $this->countSystem();
         $num_paginas = floor($total->cont/$this->limite);
-        
+
         //monta a paginação
         if($num_paginas > 1) {
-            $paginacao .= '<nav><ul class="pagination"> <li><a href="javascript:pesquisaComPaginacao(0, 1);">Inicio</a></li>';
+            $pagination .= '<nav><ul class="pagination"> <li><a href="javascript:pesquisaComPaginacao(0, 1);">Inicio</a></li>';
                 $ultima_pagina = 0;
-            
-                for ($i = 1 ; $i <= $num_paginas ; $i++) { 	
-                    
+
+                for ($i = 1 ; $i <= $num_paginas ; $i++) {
+
                     $ultima_pagina = $i*$this->limite;
-                    
+
                     if($i == $this->pagina_atual) {
-                        $paginacao .="<li class='active' ><a href='javascript:;' >".$i."</a></li>";
+                        $pagination .="<li class='active' ><a href='javascript:;' >".$i."</a></li>";
                     } else {
-                        $paginacao .="<li ><a href='javascript:pesquisaComPaginacao(".$i * $this->limite.",".$i.");'>".$i."</a></li>";
+                        $pagination .="<li ><a href='javascript:pesquisaComPaginacao(".$i * $this->limite.",".$i.");'>".$i."</a></li>";
                     }
                 }
-            
+
             if($num_paginas <= 3) {
-                $paginacao .='</lu></nav>';
+                $pagination .='</lu></nav>';
             } else {
-                $paginacao .= '<li><a href="javascript:pesquisaComPaginacao('.$ultima_pagina.', '.$num_paginas.');">Última</a> </li></lu></nav';
+                $pagination .= '<li><a href="javascript:pesquisaComPaginacao('.$ultima_pagina.', '.$num_paginas.');">Última</a> </li></lu></nav';
             }
         }
-        
-        return $paginacao;
 
-    }    
-    
+        return $pagination;
+    }
+
 }
