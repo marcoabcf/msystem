@@ -1,0 +1,2 @@
+#nao versionar banco para nao conflitar com o outro coladorador
+app/models/Database.php
