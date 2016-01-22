@@ -70,7 +70,8 @@ class SystemController extends Controller {
     {
 
         if($this->input->get('all') == 'null') {
-            $result = $this->system->toList();
+            $result['tabela'] = $this->system->toList();
+            $result['paginacao'] = $this->system->pagination();
 
         } else {
 
