@@ -32,11 +32,10 @@ $(document).ready(function() {
        data: dados,
        success: function (result) {
           var tbody = $('tbody');
-          console.log(result.tabela);
 
           if(result.tabela.length != 0) {
             var search = '';
-    
+
             $('#paginacao').html('');
             tbody.html(search);
 
@@ -54,7 +53,7 @@ $(document).ready(function() {
             });
 
           } else {
-            $('#alert').addClass('alert alert-danger').html('Nenhum Sistema foi encontrado. Favor revisar os critérios da sua pesquisa!').delay(4000).fadeOut(0);
+            $('#alert').addClass('alert alert-danger').html('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Nenhum Sistema foi encontrado. Favor revisar os critérios da sua pesquisa!');
           }
 
           tbody.append(search);

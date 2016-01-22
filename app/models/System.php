@@ -111,8 +111,8 @@ class System extends Model {
                             IF(status = 1, 'ATIVO', 'CANCELADO') 'status'
                     FROM keepsystem
                     WHERE (description LIKE :description)
-                    OR (email LIKE :email)
-                    OR (initial LIKE :initial)
+                    AND (email LIKE :email)
+                    AND (initial LIKE :initial)
                     LIMIT :limts OFFSET :apartir";
 
             $stmt = $this->conn->prepare($sql);
@@ -121,7 +121,6 @@ class System extends Model {
             $stmt->bindParam(':initial', $this->initial, PDO::PARAM_STR);
             $stmt->bindParam(':limts', $this->limite, PDO::PARAM_INT);
             $stmt->bindParam(':apartir', $this->apartir, PDO::PARAM_INT);
-
             $stmt->execute();
 
             return $stmt->fetchAll();
