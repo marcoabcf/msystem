@@ -196,7 +196,6 @@ function retornoPesquisarPaginacao(result)
     tbody.append(search);
     
     $('#paginacao').html(result.paginacao);
-    console.log(result);
 }
 
 // Limpando Campos de Pesquisa
