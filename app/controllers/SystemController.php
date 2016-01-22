@@ -68,8 +68,15 @@ class SystemController extends Controller {
 
     public function search()
     {
+<<<<<<< HEAD
         if($this->input->get('all')) {
             $result = $this->system->toList();
+=======
+
+        if($this->input->get('all') == 'null') {
+            $result['tabela'] = $this->system->toList();
+            $result['paginacao'] = $this->system->pagination();
+>>>>>>> 30a22d9c13ec679d4d9ab729e37d81cf55c55aaf
 
         } else {
 

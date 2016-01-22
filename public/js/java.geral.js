@@ -34,10 +34,13 @@ $(document).ready(function() {
           var tbody = $('tbody');
           console.log(result.tabela);
 
-          if(result.length != 0) {
-            tbody.html('');
+          if(result.tabela.length != 0) {
+            var search = '';
+    
+            $('#paginacao').html('');
+            tbody.html(search);
 
-            $.each(result, function(k, value) {
+            $.each(result.tabela, function(k, value) {
               search += "<tr>";
                 search += "<td>" + value.description + "</td>";
                 search += "<td>" + value.initial + "</td>";
@@ -55,6 +58,7 @@ $(document).ready(function() {
           }
 
           tbody.append(search);
+          $('#paginacao').html(result.paginacao);
        },
        error: function(result) {
           $('#alert').addClass('alert alert-danger').html().show('100');
