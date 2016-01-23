@@ -76,9 +76,8 @@ class SystemController extends Controller {
         } else {
 
             $this->system->description('%'. str_replace(" ", "%", $this->input->get('descricao')) .'%')
-                         ->email($this->input->get('email'))
+                         ->email('%'. $this->input->get('email') .'%')
                          ->initial('%'. $this->input->get('sigla') .'%')
-                         ->apartir($this->input->get('apartir'))
                          ->pagina_atual($this->input->get('pagina_atual'));
 
             $result['tabela'] = $this->system->search();

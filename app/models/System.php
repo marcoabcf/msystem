@@ -103,17 +103,11 @@ class System extends Model {
     {
         try {
 
-            $sql = "SELECT id,
-                            description,
-                            email,
-                            initial,
-                            url,
-                            IF(status = 1, 'ATIVO', 'CANCELADO') 'status'
-                    FROM keepsystem
-                    WHERE (description LIKE :description)
-                    AND (email LIKE :email)
-                    AND (initial LIKE :initial)
-                    LIMIT :limts OFFSET :apartir";
+            $sql = "SELECT id, description, email, initial, url, IF(status = 1, 'ATIVO', 'CANCELADO') 'status' FROM keepsystem WHERE ";
+            $sql .= "(description LIKE :description) AND ";
+            $sql .= "(email LIKE :email) AND ";
+            $sql .= "(initial LIKE :initial) ";
+            $sql .= "LIMIT :limts OFFSET :apartir";
 
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':description', $this->description, PDO::PARAM_STR);

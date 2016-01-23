@@ -4,6 +4,10 @@ $(document).ready(function() {
 // Pesquisando sistema
   $('#research, #clean_search').on('click', function() {
 
+    // Fechando Alert
+    $('#alert').alert('close');
+
+    // Criando Objeto com dados e validando campos nulos
     var obj_dados = {
                      'descricao' : $('input[name=descricao]').val(),
                      'email' : $('input[name=email]').val(),
@@ -11,7 +15,6 @@ $(document).ready(function() {
                     };
 
     var validate = ValidarCamposNulos(obj_dados);
-    var search = "";
 
     if(validate || $(this).attr('id') == 'clean_search'){
       var dados = "all=true";
@@ -34,11 +37,15 @@ $(document).ready(function() {
           var tbody = $('tbody');
 
           if(result.tabela.length != 0) {
+
+            // Variável para criação html da listagem
             var search = '';
 
+            // Limpando Paginação e corpo da tabela
             $('#paginacao').html('');
             tbody.html(search);
 
+            // Percorrendo resultado e criando html
             $.each(result.tabela, function(k, value) {
               search += "<tr>";
                 search += "<td>" + value.description + "</td>";
@@ -53,14 +60,16 @@ $(document).ready(function() {
             });
 
           } else {
+
             $('#alert').addClass('alert alert-danger').html('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Nenhum Sistema foi encontrado. Favor revisar os critérios da sua pesquisa!');
           }
 
+          // Inserindo paginação, e o resultado no tbody da tabela
           tbody.append(search);
           $('#paginacao').html(result.paginacao);
        },
        error: function(result) {
-          $('#alert').addClass('alert alert-danger').html().show('100');
+          $('#alert').addClass('alert alert-danger').html(result);
        }
     });
   });
