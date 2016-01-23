@@ -80,6 +80,10 @@ class SystemController extends Controller {
                          ->initial('%'. $this->input->get('sigla') .'%')
                          ->pagina_atual($this->input->get('pagina_atual'));
 
+            if($this->input->get('apartir')) {
+                $this->system->apartir($this->input->get('apartir'));
+            }
+
             $result['tabela'] = $this->system->search();
             $result['paginacao'] = $this->system->pagination();
         }
@@ -89,7 +93,8 @@ class SystemController extends Controller {
 
     public function pagination()
     {
-       $this->system->apartir(0)->pagina_atual(1);
+        $this->system->apartir(0)
+                     ->pagina_atual(1);
 
         return $this->system->pagination();
     }

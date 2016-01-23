@@ -135,31 +135,33 @@ class System extends Model {
         return $stmt->fetch();
     }
 
-    public function pagination() {
+    public function pagination()
+    {
         $pagination = "";
         $total = $this->countSystem();
         $num_paginas = floor($total->cont/$this->limite);
 
-        //monta a paginação
+        // Monta a paginação
         if($num_paginas > 1) {
-            $pagination .= '<nav><ul class="pagination"> <li><a href="javascript:pesquisaComPaginacao(0, 1);">Inicio</a></li>';
-                $ultima_pagina = 0;
+            $pagination .= '<nav><ul class="pagination"><li><a href="javascript:NavegarPaginacao(0, 1);">Inicio</a></li>';
 
                 for ($i = 1 ; $i <= $num_paginas ; $i++) {
 
-                    $ultima_pagina = $i*$this->limite;
+                    // Recebendo valor da última página
+                    $ultima_pagina = $i * $this->limite;
 
                     if($i == $this->pagina_atual) {
-                        $pagination .="<li class='active' ><a href='javascript:;' >".$i."</a></li>";
+                        $pagination .= "<li class='active'><a href='javascript:;' >".$i."</a></li>";
+
                     } else {
-                        $pagination .="<li ><a href='javascript:pesquisaComPaginacao(".$i * $this->limite.",".$i.");'>".$i."</a></li>";
+                        $pagination .= "<li><a href='javascript:NavegarPaginacao(". ($i-1) * $this->limite.",". $i .");'>".$i."</a></li>";
                     }
                 }
 
             if($num_paginas <= 3) {
-                $pagination .='</lu></nav>';
+                $pagination .= '</lu></nav>';
             } else {
-                $pagination .= '<li><a href="javascript:pesquisaComPaginacao('.$ultima_pagina.', '.$num_paginas.');">Última</a> </li></lu></nav';
+                $pagination .= '<li><a href="javascript:NavegarPaginacao('. $ultima_pagina .', '. $num_paginas .');">Última</a> </li></lu></nav';
             }
         }
 

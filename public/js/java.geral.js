@@ -16,9 +16,11 @@ $(document).ready(function() {
 
     var validate = ValidarCamposNulos(obj_dados);
 
+    // Verificando se a os campos foram nulos e/ou se o botão clicado foi limpar pesquisa
     if(validate || $(this).attr('id') == 'clean_search'){
       var dados = "all=true";
 
+      // Caso seja botão limpar pesquisa
       if($(this).attr('id') == 'clean_search') {
         CleanInputSearch();
       }
@@ -33,41 +35,7 @@ $(document).ready(function() {
        type: "POST",
        dataType: "json",
        data: dados,
-       success: function (result) {
-          var tbody = $('tbody');
-
-          if(result.tabela.length != 0) {
-
-            // Variável para criação html da listagem
-            var search = '';
-
-            // Limpando Paginação e corpo da tabela
-            $('#paginacao').html('');
-            tbody.html(search);
-
-            // Percorrendo resultado e criando html
-            $.each(result.tabela, function(k, value) {
-              search += "<tr>";
-                search += "<td>" + value.description + "</td>";
-                search += "<td>" + value.initial + "</td>";
-                search += "<td>" + value.email + "</td>";
-                search += "<td>" + value.url + "</td>";
-                search += "<td id='table_status' class='text-center'>" + value.status + "</td>";
-                search += "<td class='text-center'>";
-                  search += "<button class='btn btn-red-dark' onclick='location=\"alter?q=" + value.id + "\"'><span class='glyphicon glyphicon-edit' aria-hidden='true'></span></button>";
-                search += "</td>";
-              search += "</tr>";
-            });
-
-          } else {
-
-            $('#alert').addClass('alert alert-danger').html('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Nenhum Sistema foi encontrado. Favor revisar os critérios da sua pesquisa!');
-          }
-
-          // Inserindo paginação, e o resultado no tbody da tabela
-          tbody.append(search);
-          $('#paginacao').html(result.paginacao);
-       },
+       success: RetornoPesquisar,
        error: function(result) {
           $('#alert').addClass('alert alert-danger').html(result);
        }
@@ -76,7 +44,11 @@ $(document).ready(function() {
 
 // Incluindo sistema
   $('#save').on('click', function() {
+
+    // Removendo toda classe existente nos inputs chamada 'invalido'
     $('input').removeClass('invalido');
+
+    // Criando Objeto com dados e validando campos nulos
     var obj_dados = {
                      'descricao' : $('input[name=descricao]').val(),
                      'email' : $('input[name=email]').val(),
@@ -86,6 +58,7 @@ $(document).ready(function() {
 
     var validate = ValidarCampos(obj_dados);
 
+    // Caso algum input esteja vazio
     if(validate.return){
       alert("Dados obrigatórios não informados.");
       $('input[name='+validate.key+']').addClass('invalido');
@@ -102,11 +75,11 @@ $(document).ready(function() {
          data: dados,
 
          success: function (result) {
-            $('#alert').addClass('alert alert-success').html(result).delay(4000).fadeOut(0);
+            $('#alert').addClass('alert alert-success').html('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + result);
             setTimeout('window.location.href="./search"',1400);
          },
          error: function(result) {
-            $('#alert').addClass('alert alert-danger').html().show('100');
+            $('#alert').addClass('alert alert-danger').html(result);
          }
       });
     }
@@ -114,7 +87,11 @@ $(document).ready(function() {
 
 // Alterando sistema
   $('#alter').on('click', function() {
+
+    // Removendo toda classe existente nos inputs chamada 'invalido'
     $('input').removeClass('invalido');
+
+    // Criando Objeto com dados e validando campos nulos
     var obj_dados = {
                      'descricao' : $('input[name=descricao]').val(),
                      'email' : $('input[name=email]').val(),
@@ -125,8 +102,10 @@ $(document).ready(function() {
 
     var validate = ValidarCampos(obj_dados);
 
+    // Caso algum input esteja vazio
     if(validate.return){
       alert("Dados obrigatórios não informados.");
+
       $('input[name='+validate.key+']').addClass('invalido');
       return false;
 
@@ -140,7 +119,7 @@ $(document).ready(function() {
          data: dados,
 
          success: function (result) {
-            $('#alert').addClass('alert alert-success').html(result).delay(4000).fadeOut(0);
+            $('#alert').addClass('alert alert-success').html('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + result);
             $('html,body').animate({ scrollTop: 0 }, 'slow');
             setTimeout('window.location.href="./search"', 1400);
          },
@@ -159,60 +138,63 @@ $(document).ready(function() {
 
 });
 
+// Retorno do callback da funcao de pesquisa
+function RetornoPesquisar(result) {
 
-//busca com paginacao
-function pesquisaComPaginacao(apartir, pagina_atual)
-{
-    var dados = $('#searching').serialize();
-    dados += "&apartir=" + apartir + "&pagina_atual=" + pagina_atual;
+  // Definindo variáveis como ID
+  var pagination = $('#paginacao');
+  var tbody = $('tbody');
 
-    $.ajax({
-       url: "../../actions/search.php",
-       type: "POST",
-       dataType: "json",
-       data: dados,
-       success: retornoPesquisarPaginacao,
-       error: function(result) {
-          $('#alert').addClass('alert alert-danger').html().show('100');
-       }
-    });
+  if(result.tabela.length != 0) {
+
+    // Limpando e inserindo: paginação, e o resultado no tbody da tabela
+    tbody.html('').append(PercorrerResult(result));
+    pagination.html('').html(result.paginacao);
+
+  } else {
+    $('#alert').addClass('alert alert-danger').html('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Nenhum Sistema foi encontrado. Favor revisar os critérios da sua pesquisa!');
+  }
 }
 
-// retorno do callback da funcao pesquisaComPaginacao
-function retornoPesquisarPaginacao(result)
-{
-    var tbody = $('tbody');
-    var search = '';
+// Navegando com paginação
+function NavegarPaginacao(apartir, pagina_atual) {
 
-    $('#paginacao').html('');
-    tbody.html(search);
+  var dados = $('#searching').serialize();
+  dados += "&apartir=" + apartir + "&pagina_atual=" + pagina_atual;
 
-    if(result.tabela.length != 0) {
-        tbody.html('');
-
-        $.each(result.tabela, function(k, value) {
-            search += "<tr>";
-            search += "<td>" + value.description + "</td>";
-            search += "<td>" + value.initial + "</td>";
-            search += "<td>" + value.email + "</td>";
-            search += "<td>" + value.url + "</td>";
-            search += "<td id='table_status' class='text-center'>" + value.status + "</td>";
-            search += "<td class='text-center'>";
-            search += "<button class='btn btn-red-dark' onclick='location=\"alter?q=" + value.id + "\"'><span class='glyphicon glyphicon-edit' aria-hidden='true'></span></button>";
-            search += "</td>";
-            search += "</tr>";
-        });
-
-    } else {
-     $('#alert').addClass('alert alert-danger').html('Nenhum Sistema foi encontrado. Favor revisar os critérios da sua pesquisa!').delay(4000).fadeOut(0);
-    }
-
-    tbody.append(search);
-
-    $('#paginacao').html(result.paginacao);
+  $.ajax({
+     url: "../../actions/search.php",
+     type: "POST",
+     dataType: "json",
+     data: dados,
+     success: RetornoPesquisar,
+     error: function(result) {
+        $('#alert').addClass('alert alert-danger').html(result);
+     }
+  });
 }
 
-// Limpando Campos de Pesquisa
+// Percorrendo resultado, e criando e retornando html
+function PercorrerResult(result) {
+  var search = '';
+
+  $.each(result.tabela, function(k, value) {
+    search += "<tr>";
+      search += "<td>" + value.description + "</td>";
+      search += "<td>" + value.initial + "</td>";
+      search += "<td>" + value.email + "</td>";
+      search += "<td>" + value.url + "</td>";
+      search += "<td id='table_status' class='text-center'>" + value.status + "</td>";
+      search += "<td class='text-center'>";
+        search += "<button class='btn btn-red-dark' onclick='location=\"alter?q=" + value.id + "\"'><span class='glyphicon glyphicon-edit' aria-hidden='true'></span></button>";
+      search += "</td>";
+    search += "</tr>";
+  });
+
+  return search;
+}
+
+// Limpando campos de pesquisa
 function CleanInputSearch() {
     $('input[name=descricao], input[name=email], input[name=sigla]').val('');
     $('input[name=descricao]').focus();
