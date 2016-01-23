@@ -24,90 +24,123 @@ class System extends Model {
 
     public function newer()
     {
+        try {
 
-        $sql = 'INSERT INTO keepsystem(description, email, initial, url) VALUES (:description, :email, :initial, :url)';
+            $sql = 'INSERT INTO keepsystem(description, email, initial, url)
+                                VALUES (:description, :email, :initial, :url)';
 
-        $stmt = $this->conn->prepare($sql);
+            $stmt = $this->conn->prepare($sql);
 
-        $stmt->bindParam(':description', $this->description, PDO::PARAM_STR);
-        $stmt->bindParam(':email', $this->email, PDO::PARAM_STR);
-        $stmt->bindparam(':initial', $this->initial, PDO::PARAM_STR);
-        $stmt->bindparam(':url', $this->url, PDO::PARAM_STR);
+            $stmt->bindParam(':description', $this->description, PDO::PARAM_STR);
+            $stmt->bindParam(':email', $this->email, PDO::PARAM_STR);
+            $stmt->bindparam(':initial', $this->initial, PDO::PARAM_STR);
+            $stmt->bindparam(':url', $this->url, PDO::PARAM_STR);
 
-        $result = $stmt->execute();
+            $result = $stmt->execute();
 
-        if($result) {
-            return true;
+            if($result) {
+                return true;
 
-        } else {
-            return false;
+            } else {
+                return false;
+            }
+
+        } catch(PDOException $e) {
+                throw new Exception('Erro: '. $e->getMessage());
         }
     }
 
     public function alter()
     {
+        try {
 
-        $sql = 'UPDATE keepsystem SET description = :description, email = :email, initial = :initial, url = :url, status = :status WHERE id = :id';
+            $sql = 'UPDATE keepsystem SET
+                           description = :description,
+                           email = :email,
+                           initial = :initial,
+                           url = :url,
+                           status = :status
+                    WHERE id = :id';
 
-        $stmt = $this->conn->prepare($sql);
+            $stmt = $this->conn->prepare($sql);
 
-        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $stmt->bindParam(':description', $this->description, PDO::PARAM_STR);
-        $stmt->bindparam(':email', $this->email, PDO::PARAM_STR);
-        $stmt->bindparam(':initial', $this->initial, PDO::PARAM_STR);
-        $stmt->bindparam(':url', $this->url, PDO::PARAM_STR);
-        $stmt->bindparam(':status', $this->status, PDO::PARAM_INT);
+            $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+            $stmt->bindParam(':description', $this->description, PDO::PARAM_STR);
+            $stmt->bindparam(':email', $this->email, PDO::PARAM_STR);
+            $stmt->bindparam(':initial', $this->initial, PDO::PARAM_STR);
+            $stmt->bindparam(':url', $this->url, PDO::PARAM_STR);
+            $stmt->bindparam(':status', $this->status, PDO::PARAM_INT);
 
-        $result = $stmt->execute();
+            $result = $stmt->execute();
 
-        if($result) {
-            return true;
+            if($result) {
+                return true;
 
-        } else {
-            return false;
+            } else {
+                return false;
+            }
+
+        } catch(PDOException $e) {
+                throw new Exception('Erro: '. $e->getMessage());
         }
     }
 
     public function getData()
     {
-        $sql = 'SELECT * FROM keepsystem WHERE id = :id';
+        try {
+            $sql = 'SELECT * FROM keepsystem WHERE id = :id';
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $stmt->execute();
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+            $stmt->execute();
 
-        return $stmt->fetch();
+            return $stmt->fetch();
+
+        } catch(PDOException $e) {
+                throw new Exception('Erro: '. $e->getMessage());
+        }
     }
 
     public function toList()
     {
+        try {
 
-        $sql = 'SELECT  id,
-                        description,
-                        email,
-                        initial,
-                        url,
-                        IF(status = 1, "ATIVO", "CANCELADO") "status"
-                FROM keepsystem
-                LIMIT :limts OFFSET :apartir';
+            $sql = 'SELECT  id,
+                            description,
+                            email,
+                            initial,
+                            url,
+                            IF(status = 1, "ATIVO", "CANCELADO") "status"
+                    FROM keepsystem
+                    LIMIT :limts OFFSET :apartir';
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':limts', $this->limite, PDO::PARAM_INT);
-        $stmt->bindParam(':apartir', $this->apartir, PDO::PARAM_INT);
-        $stmt->execute();
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':limts', $this->limite, PDO::PARAM_INT);
+            $stmt->bindParam(':apartir', $this->apartir, PDO::PARAM_INT);
+            $stmt->execute();
 
-        return $stmt->fetchAll();
+            return $stmt->fetchAll();
+
+        } catch(PDOException $e) {
+                throw new Exception('Erro: '. $e->getMessage());
+        }
     }
 
     public function search()
     {
         try {
 
-            $sql = "SELECT id, description, email, initial, url, IF(status = 1, 'ATIVO', 'CANCELADO') 'status' FROM keepsystem WHERE ";
-            $sql .= "(description LIKE :description) AND ";
-            $sql .= "(email LIKE :email) AND ";
-            $sql .= "(initial LIKE :initial) ";
-            $sql .= "LIMIT :limts OFFSET :apartir";
+            $sql = "SELECT id,
+                           description,
+                           email,
+                           initial,
+                           url,
+                           IF(status = 1, 'ATIVO', 'CANCELADO') 'status'
+                    FROM keepsystem
+                    WHERE (description LIKE :description)
+                      AND (email LIKE :email)
+                      AND (initial LIKE :initial)
+                    LIMIT :limts OFFSET :apartir";
 
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':description', $this->description, PDO::PARAM_STR);
@@ -126,13 +159,18 @@ class System extends Model {
 
     private function countSystem()
     {
+        try {
 
-        $sql = 'SELECT count(*) cont FROM keepsystem';
+            $sql = 'SELECT count(*) cont FROM keepsystem';
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
 
-        return $stmt->fetch();
+            return $stmt->fetch();
+
+        } catch(PDOException $e) {
+                throw new Exception('Erro: '. $e->getMessage());
+        }
     }
 
     public function pagination()

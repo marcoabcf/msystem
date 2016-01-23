@@ -1,48 +1,14 @@
 // Executado quando aberto a página
 $(document).ready(function() {
 
-// Pesquisando sistema
+  // Pesquisando sistema
   $('#research, #clean_search').on('click', function() {
-
-    // Fechando Alert
+    // Fechando Alert e chamada de pesquisa
     $('#alert').alert('close');
-
-    // Criando Objeto com dados e validando campos nulos
-    var obj_dados = {
-                     'descricao' : $('input[name=descricao]').val(),
-                     'email' : $('input[name=email]').val(),
-                     'sigla' : $('input[name=sigla]').val()
-                    };
-
-    var validate = ValidarCamposNulos(obj_dados);
-
-    // Verificando se a os campos foram nulos e/ou se o botão clicado foi limpar pesquisa
-    if(validate || $(this).attr('id') == 'clean_search'){
-      var dados = "all=true";
-
-      // Caso seja botão limpar pesquisa
-      if($(this).attr('id') == 'clean_search') {
-        CleanInputSearch();
-      }
-
-    } else {
-      var dados = $('#searching').serialize();
-    }
-
-    $.ajax({
-
-       url: "../../actions/search.php",
-       type: "POST",
-       dataType: "json",
-       data: dados,
-       success: RetornoPesquisar,
-       error: function(result) {
-          $('#alert').addClass('alert alert-danger').html(result);
-       }
-    });
+    ExecutarSearchButton(this);
   });
 
-// Incluindo sistema
+  // Incluindo sistema
   $('#save').on('click', function() {
 
     // Removendo toda classe existente nos inputs chamada 'invalido'
@@ -85,7 +51,7 @@ $(document).ready(function() {
     }
   });
 
-// Alterando sistema
+  // Alterando sistema
   $('#alter').on('click', function() {
 
     // Removendo toda classe existente nos inputs chamada 'invalido'
@@ -130,13 +96,61 @@ $(document).ready(function() {
     }
   });
 
-// Selecionando status na alteração
+  // Selecionando status na alteração
   if($('#select_status').length == 1){
     var $this = $('#select_status');
     $this.children('option[value="' + status + '"]').attr('selected',true);
   }
 
+  // Executando listagem tbody ao carregar página
+  if($('#searching').length == 1) {
+    List("all=true");
+  }
+
 });
+
+// Função executada quando acionado algum botão do formulário de pesquisa
+function ExecutarSearchButton(seletor) {
+  // Criando Objeto com dados e validando campos nulos
+  var obj_dados = {
+                   'descricao' : $('input[name=descricao]').val(),
+                   'email' : $('input[name=email]').val(),
+                   'sigla' : $('input[name=sigla]').val()
+                  };
+
+  var validate = ValidarCamposNulos(obj_dados);
+
+  // Verificando se a os campos foram nulos e/ou se o botão clicado foi limpar pesquisa
+  if(validate || $(seletor).attr('id') == 'clean_search'){
+    var dados = "all=true";
+
+    // Caso seja botão limpar pesquisa
+    if($(seletor).attr('id') == 'clean_search') {
+      CleanInputSearch();
+    }
+
+  } else {
+    var dados = $('#searching').serialize();
+  }
+
+  List(dados);
+}
+
+// Listagem de dados do banco
+function List(dados) {
+
+  $.ajax({
+
+     url: "../../actions/search.php",
+     type: "POST",
+     dataType: "json",
+     data: dados,
+     success: RetornoPesquisar,
+     error: function(result) {
+        $('#alert').addClass('alert alert-danger').html(result);
+     }
+  });
+}
 
 // Retorno do callback da funcao de pesquisa
 function RetornoPesquisar(result) {
@@ -149,7 +163,7 @@ function RetornoPesquisar(result) {
 
     // Limpando e inserindo: paginação, e o resultado no tbody da tabela
     tbody.html('').append(PercorrerResult(result));
-    pagination.html('').html(result.paginacao);
+    pagination.html('').append(result.paginacao);
 
   } else {
     $('#alert').addClass('alert alert-danger').html('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Nenhum Sistema foi encontrado. Favor revisar os critérios da sua pesquisa!');
