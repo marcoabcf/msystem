@@ -157,10 +157,10 @@ function RetornoPesquisar(result) {
 }
 
 // Navegando com paginação
-function NavegarPaginacao(apartir, pagina_atual) {
+function NavegarPaginacao(pagina_atual, apartir) {
 
   var dados = $('#searching').serialize();
-  dados += "&apartir=" + apartir + "&pagina_atual=" + pagina_atual;
+  dados +=  "&pagina_atual=" + pagina_atual + "&apartir=" + apartir;
 
   $.ajax({
      url: "../../actions/search.php",

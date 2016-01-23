@@ -154,14 +154,14 @@ class System extends Model {
                         $pagination .= "<li class='active'><a href='javascript:;' >".$i."</a></li>";
 
                     } else {
-                        $pagination .= "<li><a href='javascript:NavegarPaginacao(". ($i-1) * $this->limite.",". $i .");'>".$i."</a></li>";
+                        $pagination .= "<li><a href='javascript:NavegarPaginacao(". $i .", ". ($i-1) * $this->limite .");'>". $i ."</a></li>";
                     }
                 }
 
             if($num_paginas <= 3) {
-                $pagination .= '</lu></nav>';
+                $pagination .= '</ul></nav>';
             } else {
-                $pagination .= '<li><a href="javascript:NavegarPaginacao('. $ultima_pagina .', '. $num_paginas .');">Última</a> </li></lu></nav';
+                $pagination .= '<li><a href="javascript:NavegarPaginacao('. $ultima_pagina .', '. $num_paginas .');">Última</a> </li></ul></nav';
             }
         }
 
