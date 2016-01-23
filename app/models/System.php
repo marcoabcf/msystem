@@ -15,7 +15,7 @@ class System extends Model {
     // Paginação
     protected $apartir = 0;
     protected $pagina_atual = 0;
-    protected $limite = 50;
+    protected $limite = 1;
 
     public function __construct()
     {
