@@ -37,7 +37,8 @@ class SystemController extends Controller {
                         ->email($this->input->get('email'))
                         ->initial($this->input->get('sigla'))
                         ->url($this->input->get('url'))
-                        ->status($this->input->get('status'));
+                        ->status($this->input->get('status'))
+                        ->justification($this->input->get('justification'));
 
         $result = $this->system->alter();
 

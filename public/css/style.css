@@ -186,6 +186,15 @@ footer {
   color: red;
 }
 
+.length {
+  font-size: 10px;
+  color: #363636;
+}
+
+.count_characters {
+  font-weight: bold;
+}
+
 .h1 {
 	font-size: 40px !important;
 	text-align: center !important;
@@ -215,6 +224,10 @@ option:checked {
   color: #FFFFFF;
 }
 
+.pagination {
+  margin: 0;
+}
+
 ::-webkit-input-placeholder {
  font-size: 10.8px;
  font-weight: inherit;
@@ -233,8 +246,4 @@ option:checked {
 :-ms-input-placeholder {
  font-size: 10.8px;
  font-weight: inherit;
-}
-
-.pagination {    
-    margin: 0; 
 }

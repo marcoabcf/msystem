@@ -72,20 +72,21 @@
         <div class="col-md-2 s">
           <div class="form-group">
             <label for="data">Data da Última Alteração</label>
-            <input type="text" class="form-control" id="data" name="data" value="2016-01-19 15:05:10.0" disabled/>
+            <input type="text" class="form-control" name="data" value="<?= $s->last_change; ?>" disabled/>
           </div>
         </div>
 
         <div class="col-md-6">
           <div class="form-group">
             <label for="data">Justificativa da Última Alteração</label>
-            <textarea class="form-control" rows="3" disabled></textarea>
+            <textarea class="form-control" rows="3" disabled><?= $s->last_justification; ?></textarea>
           </div>
         </div>
         <div class="col-md-6">
           <div class="form-group">
             <label for="data">Nova Justificativa de Alteração <span class="obrigatorio">*</span></label>
-            <textarea class="form-control" rows="3"></textarea>
+            <textarea class="form-control" name="justification" rows="3"></textarea>
+            <span class="length">Quantidade de caracteres disponíveis: <span class="count_characters"></span></span>
           </div>
         </div>
       </div>

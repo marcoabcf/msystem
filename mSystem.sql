@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: Jan 21, 2016 at 03:13 PM
+-- Generation Time: Jan 24, 2016 at 10:37 AM
 -- Server version: 10.0.20-MariaDB
 -- PHP Version: 5.6.13
 
@@ -32,18 +32,24 @@ CREATE TABLE IF NOT EXISTS `keepsystem` (
   `initial` varchar(10) NOT NULL,
   `email` varchar(100) DEFAULT NULL,
   `url` varchar(50) DEFAULT NULL,
-  `status` int(1) NOT NULL DEFAULT '1'
+  `status` int(1) NOT NULL DEFAULT '1',
+  `last_change` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_justification` text NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `keepsystem`--
+-- Dumping data for table `keepsystem`
+
+
+--
 -- Indexes for dumped tables
 --
 
 --
 -- Indexes for table `keepsystem`
 --
-ALTER TABLE `keepsystem`  ADD PRIMARY KEY (`id`);
+ALTER TABLE `keepsystem`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -52,7 +58,8 @@ ALTER TABLE `keepsystem`  ADD PRIMARY KEY (`id`);
 --
 -- AUTO_INCREMENT for table `keepsystem`
 --
-ALTER TABLE `keepsystem`  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+ALTER TABLE `keepsystem`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

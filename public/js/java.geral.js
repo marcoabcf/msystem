@@ -54,6 +54,8 @@ $(document).ready(function() {
   // Alterando sistema
   $('#alter').on('click', function() {
 
+    var campo_nulo;
+
     // Removendo toda classe existente nos inputs chamada 'invalido'
     $('input').removeClass('invalido');
 
@@ -63,7 +65,8 @@ $(document).ready(function() {
                      'email' : $('input[name=email]').val(),
                      'sigla' : $('input[name=sigla]').val(),
                      'url' : $('input[name=url]').val(),
-                     'status' : $('select[name=status]').val()
+                     'status' : $('select[name=status]').val(),
+                     'justification' : $('textarea[name=justification]').val()
                     };
 
     var validate = ValidarCampos(obj_dados);
@@ -72,7 +75,17 @@ $(document).ready(function() {
     if(validate.return){
       alert("Dados obrigatórios não informados.");
 
-      $('input[name='+validate.key+']').addClass('invalido');
+      var textarea = $('textarea[name='+validate.key+']');
+
+      if(textarea.length == 1){
+        campo_nulo = $('textarea[name='+validate.key+']');
+
+      } else {
+        campo_nulo = $('input[name='+validate.key+']');
+      }
+
+      campo_nulo.addClass('invalido');
+      campo_nulo.focus();
       return false;
 
     } else {
@@ -100,6 +113,30 @@ $(document).ready(function() {
   if($('#select_status').length == 1){
     var $this = $('#select_status');
     $this.children('option[value="' + status + '"]').attr('selected',true);
+  }
+
+  // Validando quantidade de caracteres da justificativa
+  if($('textarea[name=justification]').length == 1){
+    var max = 500;
+    var count_characters = $('.count_characters');
+
+    // Colocando valor máximo quando carregado a página
+    count_characters.text(max);
+
+    // Executado quando muda valor
+    $('textarea[name=justification]').on('input keyup', function() {
+      var digitado = $(this).val().length;
+      var restante = max - digitado;
+      var $this = $(this);
+
+      if(restante < 0) {
+        $this.val($this.val().substr(0, max));
+
+      } else {
+        count_characters.text(restante);
+      }
+
+    });
   }
 
 });

@@ -11,6 +11,7 @@ class System extends Model {
     protected $initial;
     protected $url;
     protected $status;
+    protected $justification;
 
     // Paginação
     protected $pagina_atual;
@@ -60,7 +61,9 @@ class System extends Model {
                            email = :email,
                            initial = :initial,
                            url = :url,
-                           status = :status
+                           status = :status,
+                           last_change = NOW(),
+                           last_justification = :justification
                     WHERE id = :id';
 
             $stmt = $this->conn->prepare($sql);
@@ -71,6 +74,7 @@ class System extends Model {
             $stmt->bindparam(':initial', $this->initial, PDO::PARAM_STR);
             $stmt->bindparam(':url', $this->url, PDO::PARAM_STR);
             $stmt->bindparam(':status', $this->status, PDO::PARAM_INT);
+            $stmt->bindparam(':justification', $this->justification, PDO::PARAM_STR);
 
             $result = $stmt->execute();
 
