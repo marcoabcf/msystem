@@ -62,7 +62,10 @@
   $(document).ready(function(){
     $("#funcionalidades").addClass('active');
     $("#search").addClass('active');
+
+    // Executando listagem tbody ao carregar página
+    List("pagina_atual=1");
   });
 </script>
-<br><br><br><br><br><br><br><br>
+
 <?php include_once ('../_layouts/footer.php'); ?>

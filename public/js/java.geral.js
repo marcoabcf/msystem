@@ -102,11 +102,6 @@ $(document).ready(function() {
     $this.children('option[value="' + status + '"]').attr('selected',true);
   }
 
-  // Executando listagem tbody ao carregar página
-  if($('#searching').length == 1) {
-    List("all=true");
-  }
-
 });
 
 // Função executada quando acionado algum botão do formulário de pesquisa
@@ -213,4 +208,3 @@ function CleanInputSearch() {
     $('input[name=descricao], input[name=email], input[name=sigla]').val('');
     $('input[name=descricao]').focus();
 }
-

@@ -13,19 +13,20 @@ class System extends Model {
     protected $status;
 
     // Paginação
+    protected $pagina_atual;
     protected $apartir = 0;
-    protected $pagina_atual = 0;
     protected $limite = 1;
 
+    // Construtor
     public function __construct()
     {
         $this->open();
     }
 
+    // Incluir
     public function newer()
     {
         try {
-
             $sql = 'INSERT INTO keepsystem(description, email, initial, url)
                                 VALUES (:description, :email, :initial, :url)';
 
@@ -50,10 +51,10 @@ class System extends Model {
         }
     }
 
+    // Alterar
     public function alter()
     {
         try {
-
             $sql = 'UPDATE keepsystem SET
                            description = :description,
                            email = :email,
@@ -85,6 +86,7 @@ class System extends Model {
         }
     }
 
+    // Listagem de dados por ID
     public function getData()
     {
         try {
@@ -101,35 +103,10 @@ class System extends Model {
         }
     }
 
-    public function toList()
-    {
-        try {
-
-            $sql = 'SELECT  id,
-                            description,
-                            email,
-                            initial,
-                            url,
-                            IF(status = 1, "ATIVO", "CANCELADO") "status"
-                    FROM keepsystem
-                    LIMIT :limts OFFSET :apartir';
-
-            $stmt = $this->conn->prepare($sql);
-            $stmt->bindParam(':limts', $this->limite, PDO::PARAM_INT);
-            $stmt->bindParam(':apartir', $this->apartir, PDO::PARAM_INT);
-            $stmt->execute();
-
-            return $stmt->fetchAll();
-
-        } catch(PDOException $e) {
-                throw new Exception('Erro: '. $e->getMessage());
-        }
-    }
-
+    // Pesquisa
     public function search()
     {
         try {
-
             $sql = "SELECT id,
                            description,
                            email,
@@ -157,10 +134,10 @@ class System extends Model {
         }
     }
 
+    // Conta sistemas existentes
     private function countSystem()
     {
         try {
-
             $sql = 'SELECT count(*) cont FROM keepsystem';
 
             $stmt = $this->conn->prepare($sql);
@@ -173,33 +150,34 @@ class System extends Model {
         }
     }
 
+    // Gera paginação
     public function pagination()
     {
         $pagination = "";
         $total = $this->countSystem();
-        $num_paginas = floor($total->cont/$this->limite);
+        $num_paginas = floor($total->cont / $this->limite);
 
-        // Monta a paginação
         if($num_paginas > 1) {
             $pagination .= '<nav><ul class="pagination"><li><a href="javascript:NavegarPaginacao(0, 1);">Inicio</a></li>';
 
                 for ($i = 1 ; $i <= $num_paginas ; $i++) {
 
-                    // Recebendo valor da última página
-                    $ultima_pagina = $i * $this->limite;
+                    // Recebendo valor da página
+                    $pagina = $i * $this->limite;
 
                     if($i == $this->pagina_atual) {
-                        $pagination .= "<li class='active'><a href='javascript:;' >".$i."</a></li>";
+                        $pagination .= "<li class='active'><a href='javascript:;' >". $i ."</a></li>";
 
                     } else {
-                        $pagination .= "<li><a href='javascript:NavegarPaginacao(". $i .", ". ($i-1) * $this->limite .");'>". $i ."</a></li>";
+                        $pagination .= "<li><a href='javascript:NavegarPaginacao(". $pagina .", ". ($i-1) * $this->limite .");'>". $i ."</a></li>";
                     }
                 }
 
             if($num_paginas <= 3) {
                 $pagination .= '</ul></nav>';
+
             } else {
-                $pagination .= '<li><a href="javascript:NavegarPaginacao('. $ultima_pagina .', '. $num_paginas .');">Última</a> </li></ul></nav';
+                $pagination .= '<li><a href="javascript:NavegarPaginacao('. $pagina .', '. $num_paginas .');">Última</a> </li></ul></nav';
             }
         }
 

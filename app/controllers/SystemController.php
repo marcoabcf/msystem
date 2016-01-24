@@ -12,9 +12,9 @@ class SystemController extends Controller {
         $this->system = new System;
     }
 
+    // Chama função que executa inclusão de um novo sistema
     public function newer()
     {
-
         $this->system->description($this->input->get('descricao'))
                         ->email($this->input->get('email'))
                         ->initial($this->input->get('sigla'))
@@ -29,9 +29,9 @@ class SystemController extends Controller {
         }
     }
 
+    // Chama função que executa alteração de dados do sistema
     public function alter()
     {
-
         $this->system->id($this->input->get('q'))
                         ->description($this->input->get('descricao'))
                         ->email($this->input->get('email'))
@@ -48,50 +48,35 @@ class SystemController extends Controller {
         }
     }
 
+    // Chama função que executa e retorna pesquisa por ID
     public function getData($id)
     {
-
         $this->system->id($id);
 
         $result = $this->system->getData();
         return $result;
-
     }
 
-    public function toList()
-    {
-
-        $result = $this->system->toList();
-        return $result;
-
-    }
-
+    // Chama função que executa e retorna pesquisa
     public function search()
     {
+        $this->system->description('%'. str_replace(" ", "%", $this->input->get('descricao')) .'%')
+                     ->email('%'. $this->input->get('email') .'%')
+                     ->initial('%'. $this->input->get('sigla') .'%')
+                     ->pagina_atual($this->input->get('pagina_atual'));
 
-        if($this->input->get('all')) {
-            $result['tabela'] = $this->system->toList();
-            $result['paginacao'] = $this->system->pagination();
-
-        } else {
-
-            $this->system->description('%'. str_replace(" ", "%", $this->input->get('descricao')) .'%')
-                         ->email('%'. $this->input->get('email') .'%')
-                         ->initial('%'. $this->input->get('sigla') .'%')
-                         ->pagina_atual($this->input->get('pagina_atual'));
-
-            if($this->input->get('apartir')) {
-                $this->system->apartir($this->input->get('apartir'));
-            }
-
-            $result['tabela'] = $this->system->search();
-            $result['paginacao'] = $this->system->pagination();
+        if($this->input->get('apartir')) {
+            $this->system->apartir($this->input->get('apartir'));
         }
+
+        $result['tabela'] = $this->system->search();
+        $result['paginacao'] = $this->system->pagination();
 
         echo json_encode($result);
     }
 
-    public function pagination()
+    // Chama função que gera e retorna a paginação
+    private function pagination()
     {
         $this->system->apartir(0)
                      ->pagina_atual(1);
