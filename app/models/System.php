@@ -181,7 +181,7 @@ class System extends Model {
                 $pagination .= '</ul></nav>';
 
             } else {
-                $pagination .= '<li><a href="javascript:NavegarPaginacao('. $pagina .', '. $num_paginas .');">Última</a> </li></ul></nav';
+                $pagination .= '<li><a href="javascript:NavegarPaginacao('. $pagina .', '. $num_paginas .');">Última</a></li></ul></nav';
             }
         }
 
