@@ -14,7 +14,7 @@ class System extends Model {
     protected $justification;
 
     // Paginação
-    protected $pagina_atual;
+    public $pagina_atual;
     protected $apartir = 0;
     protected $limite = 1;
 
@@ -111,6 +111,7 @@ class System extends Model {
     public function search()
     {
         try {
+
             $sql = "SELECT id,
                            description,
                            email,
@@ -118,17 +119,23 @@ class System extends Model {
                            url,
                            IF(status = 1, 'ATIVO', 'CANCELADO') 'status'
                     FROM keepsystem
-                    WHERE (description LIKE :description)
-                      AND (email LIKE :email)
-                      AND (initial LIKE :initial)
-                    LIMIT :limts OFFSET :apartir";
+                    WHERE (description LIKE '".$this->description."')
+                     OR (email LIKE '".$this->email."')
+                     OR (initial LIKE '".$this->initial."')
+                    
+                    LIMIT ".$this->limite." OFFSET ".$this->apartir;
+
 
             $stmt = $this->conn->prepare($sql);
+
+            //sao sei porque mas no meu desse jeito deu ruim
+            /*
             $stmt->bindParam(':description', $this->description, PDO::PARAM_STR);
             $stmt->bindParam(':email', $this->email, PDO::PARAM_STR);
             $stmt->bindParam(':initial', $this->initial, PDO::PARAM_STR);
             $stmt->bindParam(':limts', $this->limite, PDO::PARAM_INT);
             $stmt->bindParam(':apartir', $this->apartir, PDO::PARAM_INT);
+            */
             $stmt->execute();
 
             return $stmt->fetchAll();
@@ -162,7 +169,7 @@ class System extends Model {
         $num_paginas = floor($total->cont / $this->limite);
 
         if($num_paginas > 1) {
-            $pagination .= '<nav><ul class="pagination"><li><a href="javascript:NavegarPaginacao(0, 1);">Inicio</a></li>';
+            $pagination .= '<nav><ul class="pagination">';
 
                 for ($i = 1 ; $i <= $num_paginas ; $i++) {
 
@@ -177,15 +184,18 @@ class System extends Model {
                     }
                 }
 
-            if($num_paginas <= 3) {
                 $pagination .= '</ul></nav>';
 
-            } else {
-                $pagination .= '<li><a href="javascript:NavegarPaginacao('. $pagina .', '. $num_paginas .');">Última</a></li></ul></nav';
-            }
+        
         }
 
         return $pagination;
     }
 
 }
+/*
+$teste = new System();
+$teste->pagina_atual = 3;
+
+echo json_encode($teste->search());
+*/

@@ -58,6 +58,7 @@
   <span id="paginacao"></span>
 </div>
 
+<br><br><br><br><br><br><br><br><br><br><br><br>
 <script>
   $(document).ready(function(){
     $("#funcionalidades").addClass('active');

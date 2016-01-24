@@ -42,7 +42,7 @@ $(document).ready(function() {
 
          success: function (result) {
             $('#alert').addClass('alert alert-success').html('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + result);
-            setTimeout('window.location.href="./search"',1400);
+            //  setTimeout('window.location.href="./search"',1400);
          },
          error: function(result) {
             $('#alert').addClass('alert alert-danger').html(result);
@@ -191,15 +191,19 @@ function RetornoPesquisar(result) {
   var pagination = $('#paginacao');
   var tbody = $('tbody');
 
-  if(result.tabela.length != 0) {
+  pagination.html('');
+  tbody.html('');
 
-    // Limpando e inserindo: paginação, e o resultado no tbody da tabela
-    tbody.html('').append(PercorrerResult(result));
-    pagination.html('').append(result.paginacao);
+  // Limpando e inserindo: paginação, e o resultado no tbody da tabela
+  tbody.html('').append(PercorrerResult(result));
+  pagination.html('').append(result.paginacao);
+
+  /*if(result.tabela.length != 0) {
+
 
   } else {
     $('#alert').addClass('alert alert-danger').html('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Nenhum Sistema foi encontrado. Favor revisar os critérios da sua pesquisa!');
-  }
+  }*/
 }
 
 // Navegando com paginação

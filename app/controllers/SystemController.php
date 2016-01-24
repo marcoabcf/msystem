@@ -66,8 +66,11 @@ class SystemController extends Controller {
                      ->initial('%'. $this->input->get('sigla') .'%')
                      ->pagina_atual($this->input->get('pagina_atual'));
 
+        //nao precisa dessa validacao pois, se nao vier 'apartir' ele vai valer 0
         if($this->input->get('apartir')) {
             $this->system->apartir($this->input->get('apartir'));
+        } else {
+             $this->system->apartir(0);
         }
 
         $result['tabela'] = $this->system->search();
@@ -77,11 +80,10 @@ class SystemController extends Controller {
     }
 
     // Chama função que gera e retorna a paginação
-    private function pagination()
+    /*private function pagination()
     {
-        $this->system->apartir(0)
-                     ->pagina_atual(1);
+        $this->system->apartir(0)->pagina_atual(1);
 
         return $this->system->pagination();
-    }
+    }*/
 }
