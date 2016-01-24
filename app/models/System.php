@@ -173,7 +173,7 @@ class System extends Model {
                         $pagination .= "<li class='active'><a href='javascript:;' >". $i ."</a></li>";
 
                     } else {
-                        $pagination .= "<li><a href='javascript:NavegarPaginacao(". $pagina .", ". ($i-1) * $this->limite .");'>". $i ."</a></li>";
+                        $pagination .= "<li><a href='javascript:NavegarPaginacao(". $i .", ". ($i-1) * $this->limite .");'>". $i ."</a></li>";
                     }
                 }
 
