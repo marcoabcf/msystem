@@ -44,7 +44,6 @@ CREATE TABLE IF NOT EXISTS `keepsystem` (
 --
 -- Indexes for dumped tables
 --
-
 --
 -- Indexes for table `keepsystem`
 --
@@ -53,7 +52,6 @@ ALTER TABLE `keepsystem`  ADD PRIMARY KEY (`id`);
 --
 -- AUTO_INCREMENT for dumped tables
 --
-
 --
 -- AUTO_INCREMENT for table `keepsystem`
 --
