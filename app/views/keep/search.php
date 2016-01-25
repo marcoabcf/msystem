@@ -40,22 +40,7 @@
   </form>
 </div>
 
-<div class="col-md-12">
-  <table class="table table-responsive table-hover">
-    <thead>
-      <tr>
-         <th class="col-md-4">Descrição</th>
-         <th>Sigla</th>
-         <th>E-mail de Atendimento</th>
-         <th>URL</th>
-         <th class="text-center">Status</th>
-         <th class="text-center">Ações</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  <span id="paginacao"></span>
-</div>
+<div class="col-md-12" id="table_search"></div>
 
 <script>
   $(document).ready(function(){

@@ -186,13 +186,19 @@ function List(dados) {
 function RetornoPesquisar(result) {
 
   // Definindo variáveis como ID
-  var pagination = $('#paginacao');
-  var tbody = $('tbody');
+  var table = $('#table_search');
 
   if(result.tabela.length == 0) {
-    alert("Nenhum Sistema foi encontrado. Favor revisar os critérios da sua pesquisa!");
-
+    if(table.html()) {
+      alert("Nenhum Sistema foi encontrado. Favor revisar os critérios da sua pesquisa!");
+    }
   } else {
+    // Inserindo tabela na página
+    table.html('<table class="table table-responsive table-hover"><thead><tr><th class="col-md-4">Descrição</th><th>Sigla</th><th>E-mail de Atendimento</th><th>URL</th><th class="text-center">Status</th><th class="text-center">Ações</th></tr></thead><tbody></tbody></table><span id="paginacao"></span>');
+
+    var tbody = $('tbody');
+    var pagination = $('#paginacao');
+
     // Limpando e inserindo: paginação, e o resultado no tbody da tabela
     tbody.html('').append(PercorrerResult(result));
     pagination.html('').append(result.paginacao);
