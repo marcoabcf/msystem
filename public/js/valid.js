@@ -1,22 +1,35 @@
 $(document).ready(function(){
 
 // Executa quando o email tem alguma alteração
-  $('input[type=email]').on('change', function(){
+  $('input[type=email], input[name=email]').on('input change', function(){
 
-    var validate = ValidarEmail($(this).val());
-
-    if(!validate){
-
-      $(this).addClass('invalido');
-      $(this).get(0).setCustomValidity('E-mail inválido.');
-      return false;
-
-    } else {
-      $(this).get(0).setCustomValidity('');
-      $(this).removeClass('invalido');
-    }
+    ValidarEmail($(this).val());
 
   });
+
+  // Validando quantidade de caracteres da justificativa
+  if($('textarea[name=justification]').length == 1){
+    var max = 500;
+    var count_characters = $('.count_characters');
+
+    // Colocando valor máximo quando carregado a página
+    count_characters.text(max);
+
+    // Executado quando muda valor
+    $('textarea[name=justification]').on('input keyup', function() {
+      var digitado = $(this).val().length;
+      var restante = max - digitado;
+      var $this = $(this);
+
+      if(restante < 0) {
+        $this.val($this.val().substr(0, max));
+
+      } else {
+        count_characters.text(restante);
+      }
+
+    });
+  }
 
 });
 
@@ -66,10 +79,28 @@ function ValidarEmail(email){
 
   er = /^[a-zA-Z0-9][a-zA-Z0-9\._-]+@([a-zA-Z0-9\._-]+\.)[a-zA-Z-0-9]{2}/;
 
+  var input = $('input[name=email]');
+
   if(er.exec(email)) {
+    input.get(0).setCustomValidity('');
+    input.removeClass('invalido');
     return true;
 
   } else {
+    input.addClass('invalido');
+    input.popover({
+      trigger: 'manual',
+      placement: 'bottom',
+      content: 'Email Inválido!',
+    });
+    input.popover('show');
+
+    input.on('shown.bs.popover', function() {
+      setTimeout(function() {
+          input.popover('hide');
+      }, 2000);
+    });
+
     return false;
   }
 }

@@ -79,11 +79,4 @@ class SystemController extends Controller {
         echo json_encode($result);
     }
 
-    // Chama função que gera e retorna a paginação
-    /*private function pagination()
-    {
-        $this->system->apartir(0)->pagina_atual(1);
-
-        return $this->system->pagination();
-    }*/
 }

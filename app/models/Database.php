@@ -5,7 +5,7 @@ class Database
 
     private $host = "localhost";
     private $user = "root";
-    private $password = "12345";
+    private $password = "";
     private $port = "3306";
     protected $conn = NULL;
     private $dbname = "m_system";

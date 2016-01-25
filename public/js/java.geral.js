@@ -23,11 +23,15 @@ $(document).ready(function() {
                     };
 
     var validate = ValidarCampos(obj_dados);
+    var email_validate = ValidarEmail(obj_dados.email);
 
     // Caso algum input esteja vazio
     if(validate.return){
       alert("Dados obrigatórios não informados.");
       $('input[name='+validate.key+']').addClass('invalido');
+      return false;
+
+    } else if(!email_validate){
       return false;
 
     } else {
@@ -41,11 +45,11 @@ $(document).ready(function() {
          data: dados,
 
          success: function (result) {
-            $('#alert').addClass('alert alert-success').html('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + result);
-            //  setTimeout('window.location.href="./search"',1400);
+            alert(result);
+            setTimeout('window.location.href="./search"',0);
          },
          error: function(result) {
-            $('#alert').addClass('alert alert-danger').html(result);
+            alert(result);
          }
       });
     }
@@ -70,6 +74,7 @@ $(document).ready(function() {
                     };
 
     var validate = ValidarCampos(obj_dados);
+    var email_validate = ValidarEmail(obj_dados.email);
 
     // Caso algum input esteja vazio
     if(validate.return){
@@ -88,6 +93,9 @@ $(document).ready(function() {
       campo_nulo.focus();
       return false;
 
+    } else if(!email_validate){
+      return false;
+
     } else {
       var dados = $('#alteration').serialize() + "&q=" + q;
 
@@ -98,12 +106,11 @@ $(document).ready(function() {
          data: dados,
 
          success: function (result) {
-            $('#alert').addClass('alert alert-success').html('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + result);
-            $('html,body').animate({ scrollTop: 0 }, 'slow');
-            setTimeout('window.location.href="./search"', 1400);
+            alert(result);
+            setTimeout('window.location.href="./search"', 0);
          },
          error: function(result) {
-            $('#alert').addClass('alert alert-danger').html().show('100');
+            alert(result);
          }
       });
     }
@@ -115,34 +122,11 @@ $(document).ready(function() {
     $this.children('option[value="' + status + '"]').attr('selected',true);
   }
 
-  // Validando quantidade de caracteres da justificativa
-  if($('textarea[name=justification]').length == 1){
-    var max = 500;
-    var count_characters = $('.count_characters');
-
-    // Colocando valor máximo quando carregado a página
-    count_characters.text(max);
-
-    // Executado quando muda valor
-    $('textarea[name=justification]').on('input keyup', function() {
-      var digitado = $(this).val().length;
-      var restante = max - digitado;
-      var $this = $(this);
-
-      if(restante < 0) {
-        $this.val($this.val().substr(0, max));
-
-      } else {
-        count_characters.text(restante);
-      }
-
-    });
-  }
-
 });
 
 // Função executada quando acionado algum botão do formulário de pesquisa
 function ExecutarSearchButton(seletor) {
+
   // Criando Objeto com dados e validando campos nulos
   var obj_dados = {
                    'descricao' : $('input[name=descricao]').val(),
@@ -152,20 +136,34 @@ function ExecutarSearchButton(seletor) {
 
   var validate = ValidarCamposNulos(obj_dados);
 
+  // Verifica se existe algo em email
+  if(obj_dados.email) {
+    var email_validate = ValidarEmail(obj_dados.email);
+  }
+
   // Verificando se a os campos foram nulos e/ou se o botão clicado foi limpar pesquisa
   if(validate || $(seletor).attr('id') == 'clean_search'){
     var dados = "all=true";
 
     // Caso seja botão limpar pesquisa
     if($(seletor).attr('id') == 'clean_search') {
-      CleanInputSearch();
+      CleanInputSearch(dados);
     }
 
   } else {
     var dados = $('#searching').serialize();
+
+    // Verifica os campos com valores e lista dados da pesquisa
+    if(
+        ((obj_dados.descricao  || obj_dados.sigla) && !obj_dados.email)                     ||
+        ((!obj_dados.descricao || !obj_dados.sigla) && (obj_dados.email && email_validate)) ||
+        ((obj_dados.descricao  || obj_dados.sigla) && (obj_dados.email && email_validate))
+      ){
+
+      List(dados);
+    }
   }
 
-  List(dados);
 }
 
 // Listagem de dados do banco
@@ -191,19 +189,14 @@ function RetornoPesquisar(result) {
   var pagination = $('#paginacao');
   var tbody = $('tbody');
 
-  pagination.html('');
-  tbody.html('');
-
-  // Limpando e inserindo: paginação, e o resultado no tbody da tabela
-  tbody.html('').append(PercorrerResult(result));
-  pagination.html('').append(result.paginacao);
-
-  /*if(result.tabela.length != 0) {
-
+  if(result.tabela.length == 0) {
+    alert("Nenhum Sistema foi encontrado. Favor revisar os critérios da sua pesquisa!");
 
   } else {
-    $('#alert').addClass('alert alert-danger').html('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Nenhum Sistema foi encontrado. Favor revisar os critérios da sua pesquisa!');
-  }*/
+    // Limpando e inserindo: paginação, e o resultado no tbody da tabela
+    tbody.html('').append(PercorrerResult(result));
+    pagination.html('').append(result.paginacao);
+  }
 }
 
 // Navegando com paginação
@@ -231,9 +224,9 @@ function PercorrerResult(result) {
   $.each(result.tabela, function(k, value) {
     search += "<tr>";
       search += "<td>" + value.description + "</td>";
-      search += "<td>" + value.initial + "</td>";
-      search += "<td>" + value.email + "</td>";
-      search += "<td>" + value.url + "</td>";
+      search += "<td class='col-md-1'>" + value.initial + "</td>";
+      search += "<td class='col-md-3'>" + value.email + "</td>";
+      search += "<td class='col-md-3'>" + value.url + "</td>";
       search += "<td id='table_status' class='text-center'>" + value.status + "</td>";
       search += "<td class='text-center'>";
         search += "<button class='btn btn-red-dark' onclick='location=\"alter?q=" + value.id + "\"'><span class='glyphicon glyphicon-edit' aria-hidden='true'></span></button>";
@@ -245,7 +238,13 @@ function PercorrerResult(result) {
 }
 
 // Limpando campos de pesquisa
-function CleanInputSearch() {
-    $('input[name=descricao], input[name=email], input[name=sigla]').val('');
-    $('input[name=descricao]').focus();
+function CleanInputSearch(dados) {
+  // Removendo toda classe existente nos inputs chamada 'invalido'
+  $('input').removeClass('invalido');
+  $('input[name=email]').get(0).setCustomValidity('');
+
+  $('input[name=descricao], input[name=email], input[name=sigla]').val('');
+  $('input[name=descricao]').focus();
+
+  List(dados);
 }

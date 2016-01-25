@@ -9,7 +9,6 @@
 ?>
 
 <div class="col-md-12 bottom">
-  <div id="alert"></div>
   <button type="button" class="btn btn-red-dark" onclick="window.location='./search'"><span class="glyphicon glyphicon-menu-left"></span> Voltar</button>
   <h4>Alterar Sistema</h4>
 

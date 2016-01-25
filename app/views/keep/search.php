@@ -7,7 +7,6 @@
 </div>
 
 <div class="col-md-12">
-  <div id="alert"></div>
   <form id="searching" method="POST" onsubmit="return false;" role="form" enctype="multipart/form-data" accept-charset="utf-8">
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -23,7 +22,7 @@
         <div class="col-md-3">
           <div class="form-group">
             <label for="email">E-mail de Atendimento do Sistema</label>
-            <input type="text" class="form-control" name="email" placeholder="sistema@exemplo.com" maxlength="100"/>
+            <input type="text" class="form-control" name="email" placeholder="sistema@exemplo.com" maxlength="100" novalidate/>
           </div>
         </div>
         <div class="col-md-3">
@@ -58,7 +57,6 @@
   <span id="paginacao"></span>
 </div>
 
-<br><br><br><br><br><br><br><br><br><br><br><br>
 <script>
   $(document).ready(function(){
     $("#funcionalidades").addClass('active');

@@ -16,7 +16,7 @@ class System extends Model {
     // Paginação
     public $pagina_atual;
     protected $apartir = 0;
-    protected $limite = 1;
+    protected $limite = 50;
 
     // Construtor
     public function __construct()
@@ -119,23 +119,14 @@ class System extends Model {
                            url,
                            IF(status = 1, 'ATIVO', 'CANCELADO') 'status'
                     FROM keepsystem
-                    WHERE (description LIKE '".$this->description."')
-                     OR (email LIKE '".$this->email."')
-                     OR (initial LIKE '".$this->initial."')
-                    
-                    LIMIT ".$this->limite." OFFSET ".$this->apartir;
+                    WHERE (description LIKE '". $this->description ."')
+                     AND (email LIKE '". $this->email ."')
+                     AND (initial LIKE '". $this->initial ."')
+
+                    LIMIT ". $this->limite ." OFFSET ". $this->apartir;
 
 
             $stmt = $this->conn->prepare($sql);
-
-            //sao sei porque mas no meu desse jeito deu ruim
-            /*
-            $stmt->bindParam(':description', $this->description, PDO::PARAM_STR);
-            $stmt->bindParam(':email', $this->email, PDO::PARAM_STR);
-            $stmt->bindParam(':initial', $this->initial, PDO::PARAM_STR);
-            $stmt->bindParam(':limts', $this->limite, PDO::PARAM_INT);
-            $stmt->bindParam(':apartir', $this->apartir, PDO::PARAM_INT);
-            */
             $stmt->execute();
 
             return $stmt->fetchAll();
@@ -145,11 +136,14 @@ class System extends Model {
         }
     }
 
-    // Conta sistemas existentes
+    // Conta sistemas existentes conforme pesquisa
     private function countSystem()
     {
         try {
-            $sql = 'SELECT count(*) cont FROM keepsystem';
+            $sql = "SELECT count(*) cont FROM keepsystem
+                    WHERE (description LIKE '". $this->description ."')
+                     AND (email LIKE '". $this->email ."')
+                     AND (initial LIKE '". $this->initial ."')";
 
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
@@ -166,15 +160,12 @@ class System extends Model {
     {
         $pagination = "";
         $total = $this->countSystem();
-        $num_paginas = floor($total->cont / $this->limite);
+        $num_paginas = ceil($total->cont / $this->limite);
 
         if($num_paginas > 1) {
-            $pagination .= '<nav><ul class="pagination">';
+            $pagination .= '<center><nav><ul class="pagination">';
 
                 for ($i = 1 ; $i <= $num_paginas ; $i++) {
-
-                    // Recebendo valor da página
-                    $pagina = $i * $this->limite;
 
                     if($i == $this->pagina_atual) {
                         $pagination .= "<li class='active'><a href='javascript:;' >". $i ."</a></li>";
@@ -184,18 +175,12 @@ class System extends Model {
                     }
                 }
 
-                $pagination .= '</ul></nav>';
+                $pagination .= '</ul></nav></center>';
 
-        
+
         }
 
         return $pagination;
     }
 
 }
-/*
-$teste = new System();
-$teste->pagina_atual = 3;
-
-echo json_encode($teste->search());
-*/
