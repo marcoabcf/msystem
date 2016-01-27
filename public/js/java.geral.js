@@ -189,13 +189,17 @@ function RetornoPesquisar(result) {
   var table = $('#table_search');
 
   if(result.tabela.length == 0) {
+
+    // Valida se existe a tabela de listagem
     if(table.html()) {
       alert("Nenhum Sistema foi encontrado. Favor revisar os critérios da sua pesquisa!");
     }
+
   } else {
     // Inserindo tabela na página
     table.html('<table class="table table-responsive table-hover"><thead><tr><th class="col-md-4">Descrição</th><th>Sigla</th><th>E-mail de Atendimento</th><th>URL</th><th class="text-center">Status</th><th class="text-center">Ações</th></tr></thead><tbody></tbody></table><span id="paginacao"></span>');
 
+    // Definindo novas variáveis como ID
     var tbody = $('tbody');
     var pagination = $('#paginacao');
 

@@ -94,7 +94,15 @@ class System extends Model {
     public function getData()
     {
         try {
-            $sql = 'SELECT * FROM keepsystem WHERE id = :id';
+            $sql = 'SELECT description,
+                           email,
+                           initial,
+                           url,
+                           status,
+                           DATE_FORMAT(last_change,
+                                       "%d/%m/%Y - %H:%i:%s") last_change,
+                           last_justification
+                    FROM keepsystem WHERE id = :id';
 
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
